@@ -1,72 +1,85 @@
-import { Heart, HeartPulse, Soup } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import SwiggyButton from "./SwiggyButton";
 
-const RecipeCard = ({ recipe, bg, badge }) => {
+const RecipeCard = ({ recipe, bg, onFavoriteUpdate }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
-  // On mount (and whenever recipe.strMeal changes), check if this recipe is in local storage favorites
   useEffect(() => {
     const favourites = JSON.parse(localStorage.getItem("favourites")) || [];
-    const isRecipeAlreadyInFavourite = favourites.some(
-      (fav) => fav.strMeal === recipe.strMeal
-    );
-    if (isRecipeAlreadyInFavourite) {
-      setIsFavorite(true);
-    }
-  }, [recipe.strMeal]);
+    setIsFavorite(favourites.some((fav) => fav.idMeal === recipe.idMeal));
+  }, [recipe.idMeal]);
 
-  const addRecipeToFavorites = () => {
+  const toggleFavorite = () => {
     let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
-    const isRecipeAlreadyInFavourite = favourites.some(
-      (fav) => fav.strMeal === recipe.strMeal
-    );
 
-    if (isRecipeAlreadyInFavourite) {
-      // Remove the recipe from favourites by filtering it out
-      favourites = favourites.filter(
-        (fav) => fav.strMeal !== recipe.strMeal
-      );
-      setIsFavorite(false);
+    if (isFavorite) {
+      favourites = favourites.filter((fav) => fav.idMeal !== recipe.idMeal);
     } else {
       favourites.push(recipe);
-      setIsFavorite(true);
     }
+
     localStorage.setItem("favourites", JSON.stringify(favourites));
-	
+    setIsFavorite(!isFavorite);
+    onFavoriteUpdate();
   };
 
   return (
-    <div className={`flex flex-col rounded-md ${bg} overflow-hidden p-3 relative`}>
+    <div
+      className={`relative flex flex-col rounded-xl ${bg} p-4 border border-[#00eaff]/50
+      backdrop-blur-xl bg-[#0f172a]/60 shadow-[0_0_20px_#00eaff] transition-all duration-500 
+      hover:scale-105 hover:shadow-[0_0_40px_#00eaff]`}
+    >
+      {/* 🎥 Image Section */}
       <a
         href={recipe.strYoutube}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative h-32"
+        className="relative h-48 rounded-lg overflow-hidden group"
       >
-        <div className="skeleton absolute inset-0" />
         <img
-          src={recipe?.strMealThumb || "default-image-url.jpg"}
-          alt="recipe img"
-          className="rounded-md w-full h-full object-cover cursor-pointer opacity-0 transition-opacity duration-500"
-          onLoad={(e) => {
-            e.currentTarget.style.opacity = 1;
-            e.currentTarget.previousElementSibling.style.display = "none";
-          }}
+          src={recipe?.strMealThumb || "default-image.jpg"}
+          alt={recipe.strMeal}
+          className="w-full h-full object-cover transition-transform duration-700 
+          group-hover:scale-110 group-hover:rotate-2"
         />
+        {/* ❤️ Favorite Button */}
         <div
-          className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer"
+          className="absolute top-3 right-3 p-2 bg-[#1e293b]/70 rounded-full cursor-pointer
+          transition-transform duration-300 hover:scale-125 shadow-[0_0_15px_#ff6b6b]"
           onClick={(e) => {
             e.preventDefault();
-            addRecipeToFavorites();
+            toggleFavorite();
           }}
         >
-          {!isFavorite && <Heart size={20} className="hover:fill-red-500 hover:text-red-500" />}
-          {isFavorite && <Heart size={20} className="fill-red-500 text-red-500" />}
+          {isFavorite ? (
+            <Heart className="text-red-500 fill-red-500 drop-shadow-[0_0_10px_#ff6b6b]" size={24} />
+          ) : (
+            <Heart className="text-gray-300 hover:text-red-500 transition-colors duration-300" size={24} />
+          )}
         </div>
       </a>
 
-      <div className="flex mt-1">
-        <p className="font-bold tracking-wide">{recipe?.strMeal || "hello"}</p>
+      {/* 🍽️ Title */}
+      <h3 className="mt-4 text-xl font-bold text-[#00eaff] tracking-wider text-center">
+        {recipe?.strMeal}
+      </h3>
+
+      {/* 🔍 More Info Button */}
+      <button
+        onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
+        className="mt-5 bg-[#00eaff] hover:bg-[#0ea5e9] text-black font-bold py-3 px-6 
+        rounded-lg shadow-[0_0_15px_#00eaff] transition-all duration-500 hover:shadow-[0_0_30px_#00eaff] 
+        hover:scale-[1.1] active:scale-95"
+      >
+        More Info
+      </button>
+
+      {/* 🚀 Swiggy Button */}
+      <div className="mt-4 flex justify-center">
+        <SwiggyButton recipename={recipe.strMeal} />
       </div>
     </div>
   );

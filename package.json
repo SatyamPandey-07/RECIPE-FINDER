@@ -7,8 +7,7 @@
         "dev": "vite",
         "build": "vite build",
         "lint": "eslint .",
-        "preview": "vite preview",
-        "homepage": "https://Thundercloud12.github.io/reacttutorial"
+        "preview": "vite preview"
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",
@@ -18,7 +17,6 @@
         "@radix-ui/react-separator": "^1.1.2",
         "@radix-ui/react-slot": "^1.1.2",
         "@radix-ui/react-tooltip": "^1.1.8",
-        "@tailwindcss/vite": "^4.0.9",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-react": "^0.477.0",
@@ -31,6 +29,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.21.0",
+        "@tailwindcss/vite": "^4.0.9",
         "@types/node": "^22.13.8",
         "@types/react": "^19.0.10",
         "@types/react-dom": "^19.0.4",

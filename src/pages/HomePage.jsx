@@ -1,106 +1,96 @@
 import { Search } from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"
-
-
-
+import { Button } from "../components/ui/button";
 
 const HomePage = () => {
-	const [recipes, setRecipes] = useState([]);
-	const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-
- const fetchRecipes = async (queryparam) => {
-  try {
-    const res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${queryparam}`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
-    // Wait for JSON parsing
-    const data = await res.json();
-    
-    console.log("API Response Data:", data); 
-    setRecipes(data.meals || []);
-    setLoading(false);
-    } catch (error) {
-      console.log(error);
-      
-    }
-  }
-
-  const suggestrecipe = async () => {
+  const fetchRecipes = async (queryparam) => {
     try {
-      const res = await fetch(`https://www.themealdb.com/api/json/v1/1/random.php`)
-      const recipes = await res.json()
-      setRecipes(recipes.meals || []); 
+      setLoading(true);
+      const res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${queryparam}`);
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      const data = await res.json();
+      setRecipes(data.meals || []);
     } catch (error) {
-      
+      console.error("Error fetching recipes:", error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  const suggestRecipe = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("https://www.themealdb.com/api/json/v1/1/random.php");
+      const data = await res.json();
+      setRecipes(data.meals || []);
+    } catch (error) {
+      console.error("Error fetching suggestion:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchRecipes("cake")
-  }, [])
+    fetchRecipes("egg");
+  }, []);
 
   const handleSearchRecipe = (e) => {
     e.preventDefault();
-    fetchRecipes(e.target[0].value)
-  }
+    fetchRecipes(searchQuery);
+  };
 
-	return (
-		<div className="bg-[#faf9fb] p-10 flex flex-nowrap">
-      <div className="flex-1 ml-6">
-        <div className="max-w-screen-lg mx-auto">
-          <div className="flex gap-x-10">
-          <form onSubmit={handleSearchRecipe}>
-            <label className="input shadow-md flex items-center gap-2">
-              <Search size={"24"} />
+  return (
+    <div className="bg-[#0f172a] text-white min-h-screen flex flex-col p-6 md:p-10">
+      <div className="max-w-screen-lg mx-auto w-full">
+        {/* 🔍 Search Bar & Suggestion Button */}
+        <div className="flex gap-4 items-center">
+          <form onSubmit={handleSearchRecipe} className="flex-grow">
+            <label className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[#1e293b] border border-[#38bdf8] shadow-md shadow-cyan-500/30 focus-within:border-cyan-300">
+              <Search size={20} className="text-cyan-300" />
               <input
                 type="text"
-                className="text-sm md:text-md grow"
+                className="bg-transparent outline-none text-white text-md w-full placeholder-gray-400"
                 placeholder="What do you want to cook today?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </label>
           </form>
-         <Button className="bg-fuchsia-100 text-amber-500" onClick={(e) => {
-          e.preventDefault()
-          suggestrecipe()
-         }}>Suggest me something</Button>
+
+          <Button
+            className="bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-cyan-600 hover:to-blue-800 
+                       text-white font-bold px-5 py-2 rounded-lg transition-all shadow-lg 
+                       shadow-cyan-400/40 hover:shadow-cyan-500/50 transform hover:scale-105"
+            onClick={suggestRecipe}
+          >
+            🎲 Suggest Me
+          </Button>
         </div>
-          
 
+        {/* 🍽️ Section Title */}
+        <h1 className="font-extrabold text-4xl md:text-5xl mt-8 text-[#38bdf8]">Recommended Recipes</h1>
+        <p className="text-gray-400 text-lg mt-2">🔥 Popular choices for today</p>
 
-          <h1 className="font-bold text-3xl md:text-5xl mt-4">
-            Recommended Recipes
-          </h1>
-          <p className="text-slate-500 font-semibold ml-1 my-2 text-sm tracking-tight">
-            Popular choices
-          </p>
-
-          <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {!loading &&
-              recipes.map((recipe , index) => (
-                <RecipeCard key={index} recipe={recipe} />
-              ))}
-
-            {loading &&
-              [...Array(9)].map((_, index) => (
-                <div key={index} className="flex flex-col gap-4 w-full">
-                  <div className="skeleton h-32 w-full"></div>
-                  <div className="flex justify-between">
-                    <div className="skeleton h-4 w-28"></div>
-                    <div className="skeleton h-4 w-24"></div>
-                  </div>
-                  <div className="skeleton h-4 w-1/2"></div>
+        {/* 🟦 Recipes Grid / Skeleton Loading */}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+          {loading
+            ? [...Array(9)].map((_, index) => (
+                <div key={index} className="flex flex-col gap-3 w-full animate-pulse">
+                  <div className="bg-gray-800 h-40 w-full rounded-lg shadow-md"></div>
+                  <div className="bg-gray-700 h-4 w-1/2 rounded"></div>
+                  <div className="bg-gray-700 h-4 w-1/3 rounded"></div>
                 </div>
-              ))}
-          </div>
+              ))
+            : recipes.map((recipe) => <RecipeCard key={recipe.idMeal} recipe={recipe} />)}
         </div>
       </div>
     </div>
-	);
+  );
 };
+
 export default HomePage;

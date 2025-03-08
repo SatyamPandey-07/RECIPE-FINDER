@@ -1,31 +1,79 @@
+/* 🔥 Reset and Universal Styles */
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
-.displayImage {
-  height: 100%;
-  width: 100%;
+/* 🌌 Cyberpunk Background */
+body {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  background: #0a0a0a; /* Deep black */
+  color: #e0e0e0; /* Soft white text */
+  overflow-x: hidden;
 }
 
+/* ✨ Neon Glow */
+.neon-glow {
+  text-shadow: 0 0 8px #00eaff, 0 0 16px #00eaff;
+}
+
+/* 🌀 Neon Border */
+.neon-border {
+  box-shadow: 0 0 12px #00eaff, 0 0 24px #00eaff;
+  border: 2px solid #00eaff;
+  border-radius: 10px;
+}
+
+/* 🎭 Glassmorphism */
+.glassmorphic {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px;
+}
+
+/* 🖼️ Image Display */
+.displayImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* 🃏 Card Styling */
 .displayCardMiddle {
-  width: 390px;
+  width: 400px;
   display: flex;
-  /* border: 2px solid black; */
   justify-content: space-between;
+  gap: 14px;
 }
 
 .displayCard {
-  padding-left: 5px;
-  width: 500px;
-  /* border: 2px solid black; */
+  padding-left: 10px;
+  width: 520px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🌀 Card Hover Effect */
+.displayCard:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 20px rgba(0, 234, 255, 0.3);
+}
+
+/* 🌟 Responsive Design */
+@media (max-width: 770px) {
+  .displayCardMiddle {
+    margin: 14px 0;
+  }
 }
 
 @media (max-width: 426px) {
   .displayCardMiddle {
     flex-direction: column;
-    margin: 5px 0;
+    margin: 6px 0;
     width: 100%;
   }
 
@@ -34,8 +82,72 @@
   }
 }
 
-@media (max-width: 770px) {
-  .displayCardMiddle {
-    margin: 10px 0;
+/* 🔘 Cyberpunk Button */
+.neon-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: transparent;
+  color: #00eaff;
+  border: 2px solid #00eaff;
+  box-shadow: 0px 0px 12px #00eaff, 0px 0px 24px #00eaff;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🎇 Hover State */
+.neon-button:hover {
+  background: #00eaff;
+  color: #0a0a0a;
+  box-shadow: 0px 0px 24px #00eaff, 0px 0px 36px #00eaff;
+  transform: scale(1.08);
+}
+
+/* 🌀 Neon Ripple Effect */
+.neon-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 234, 255, 0.5) 10%, transparent 70%);
+  transition: all 0.3s ease-in-out;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0.7;
+}
+
+.neon-button:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* 🚀 Floating Animation */
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
   }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating {
+  animation: floating 3s infinite ease-in-out;
+}
+
+/* 🌙 Dark Card Effect */
+.dark-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
